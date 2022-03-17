@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?><ManagementPack ContentReadable="true" SchemaVersion="2.0" OriginalSchemaVersion="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <Manifest>
+    <Identity>
+      <ID>OMEDEvent</ID>
+      <Version>1.0.0.2</Version>
+    </Identity>
+    <Name>OMEDEvent</Name>
+    <References>
+      <Reference Alias="Windows">
+        <ID>Microsoft.Windows.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System">
+        <ID>System.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SystemCenter">
+        <ID>Microsoft.SystemCenter.Library</ID>
+        <Version>7.0.8448.6</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Linux">
+        <ID>Microsoft.Linux.Library</ID>
+        <Version>10.19.1147.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Unix">
+        <ID>Microsoft.Unix.Library</ID>
+        <Version>10.19.1147.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Health">
+        <ID>System.Health.Library</ID>
+        <Version>7.0.8443.6</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+    </References>
+  </Manifest>
+  <Monitoring>
+    <Rules>
+      <Rule ID="RuleForAllEvents" Enabled="true" Target="Linux!Microsoft.Linux.Computer" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>EventCollection</Category>
+        <DataSources>
+          <DataSource ID="Rule0DS0" TypeID="Linux!Microsoft.Linux.OMED.EventDataSource">
+            <ComputerName>$Target/Property[Type="Unix!Microsoft.Unix.Computer"]/NetworkName$</ComputerName>
+            <ManagedEntityId>$Target/Id$</ManagedEntityId>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="GenerateAlert" TypeID="Health!System.Health.GenerateAlert">
+            <Priority>2</Priority>
+            <Severity>1</Severity>
+            <AlertMessageId>$MPElement[Name="EventProvider.Alert"]$</AlertMessageId>
+            <AlertParameters>
+              <AlertParameter1>$Data/EventData/DataItem/Params/Param[1]$</AlertParameter1>
+              <AlertParameter2>$Data/EventDisplayNumber$</AlertParameter2>
+              <AlertParameter3>$Data/EventData/DataItem/Params/Param[5]$</AlertParameter3>
+            </AlertParameters>
+            <Suppression />
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="EventProvider.Alert" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="EventProvider.Alert">
+          <Name>Linux FluentD Log File Alert</Name>
+          <Description>Server Name:  {0}.
+Event ID: {1}.
+Log Description : {2}</Description>
+        </DisplayString>
+        <DisplayString ElementID="RuleForAllEvents">
+          <Name>RuleForAllEvents</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="RuleForAllEvents" SubElementID="GenerateAlert">
+          <Name>GenerateAlert</Name>
+        </DisplayString>
+        <DisplayString ElementID="RuleForAllEvents" SubElementID="Rule0DS0">
+          <Name>Linux OMED Event Datasource</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPack>
